@@ -27,11 +27,25 @@ const options = {
 
 flatpickr('#datetime-picker', options);
 
+checkDateValidity();
+
 btn.addEventListener('click', () => {
   if (userSelectedDate) {
     startCountdown(userSelectedDate);
   }
 });
+
+function checkDateValidity() {
+  const currentDate = new Date();
+  const datetimeInput = document.querySelector('#datetime-picker').value;
+  
+  if (datetimeInput && new Date(datetimeInput) <= currentDate) {
+    showWarning('Please choose a date in the future');
+    btn.disabled = true;
+  } else {
+    btn.disabled = false;
+  }
+}
 
 function startCountdown(targetDate) {
   const timeDifference = targetDate - new Date();
@@ -51,10 +65,8 @@ function startCountdown(targetDate) {
 
 function updateTimerDisplay(ms) {
   const { days, hours, minutes, seconds } = convertMs(ms);
-  document.querySelector('[data-days]').textContent = addLeadingZero(days);
-  document.querySelector('[data-hours]').textContent = addLeadingZero(hours);
-  document.querySelector('[data-minutes]').textContent = addLeadingZero(minutes);
-  document.querySelector('[data-seconds]').textContent = addLeadingZero(seconds);
+  const timerString = `${addLeadingZero(days)}:${addLeadingZero(hours)}:${addLeadingZero(minutes)}:${addLeadingZero(seconds)}`;
+  document.querySelector('.timer').textContent = timerString;
 }
 
 function convertMs(ms) {
