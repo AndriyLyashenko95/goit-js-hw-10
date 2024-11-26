@@ -7,6 +7,8 @@ const btn = document.querySelector('[data-start]');
 let userSelectedDate = null;
 let interval;
 
+btn.disabled = true;
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -17,17 +19,15 @@ const options = {
     
     if (selectedDate <= new Date()) {
       showWarning('Please choose a date in the future');
-      btn.disabled = true;
+      btn.disabled = true;  
     } else {
       userSelectedDate = selectedDate;
-      btn.disabled = false;
+      btn.disabled = false; 
     }
   },
 };
 
 flatpickr('#datetime-picker', options);
-
-checkDateValidity();
 
 btn.addEventListener('click', () => {
   if (userSelectedDate) {
@@ -35,28 +35,19 @@ btn.addEventListener('click', () => {
   }
 });
 
-function checkDateValidity() {
-  const currentDate = new Date();
-  const datetimeInput = document.querySelector('#datetime-picker').value;
-  
-  if (datetimeInput && new Date(datetimeInput) <= currentDate) {
-    showWarning('Please choose a date in the future');
-    btn.disabled = true;
-  } else {
-    btn.disabled = false;
-  }
-}
-
 function startCountdown(targetDate) {
+  document.querySelector('#datetime-picker').disabled = true;
+  btn.disabled = true;
+
   const timeDifference = targetDate - new Date();
   updateTimerDisplay(timeDifference);
 
-  btn.disabled = true;
   interval = setInterval(() => {
     const remainingTime = targetDate - new Date();
     if (remainingTime <= 0) {
       clearInterval(interval);
       showSuccess('Timer has finished!');
+      updateTimerDisplay(0);
     } else {
       updateTimerDisplay(remainingTime);
     }
@@ -65,8 +56,11 @@ function startCountdown(targetDate) {
 
 function updateTimerDisplay(ms) {
   const { days, hours, minutes, seconds } = convertMs(ms);
-  const timerString = `${addLeadingZero(days)}:${addLeadingZero(hours)}:${addLeadingZero(minutes)}:${addLeadingZero(seconds)}`;
-  document.querySelector('.timer').textContent = timerString;
+
+  document.querySelector('[data-days]').textContent = addLeadingZero(days);
+  document.querySelector('[data-hours]').textContent = addLeadingZero(hours);
+  document.querySelector('[data-minutes]').textContent = addLeadingZero(minutes);
+  document.querySelector('[data-seconds]').textContent = addLeadingZero(seconds);
 }
 
 function convertMs(ms) {
